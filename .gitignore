@@ -1,0 +1,7 @@
+dist/*
+docs/_build/*
+.tox
+*.pyc
+tlog.egg-info
+build/
+.coverage
