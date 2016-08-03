@@ -2,12 +2,17 @@
 import struct
 
 def get(fileobj):
+    prevpos = fileobj.tell()
     kv = fileobj.read(8)
     keylen = struct.unpack(">L", kv[:4])[0]
     valuelen = struct.unpack(">L", kv[4:8])[0]
-    bkey = fileobj.read(keylen)
-    bvalue = fileobj.read(valuelen)
-    return bkey, bvalue
+    try:
+        bkey = fileobj.read(keylen)
+        bvalue = fileobj.read(valuelen)
+        return bkey, bvalue
+    except IOError:
+        fileobj.seek(prevpos)
+        raise
 
 def put(fileobj, bkey, bvalue):
     """write key (bytes) and value (bytes) to file object"""
@@ -26,5 +31,6 @@ def put(fileobj, bkey, bvalue):
     except IOError:
         # restore previous position should one of the writes fail
         if fileobj.tell() != prevpos:
-            fileobj.truncate(prevpos)
+            fileobj.seek(prevpos)
+            fileobj.truncate()
         raise
