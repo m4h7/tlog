@@ -38,8 +38,8 @@ class TestTlog(TestCase):
         tlog.put(f, keywritten, valuewritten)
         f.seek(0)
         keyread, valueread = tlog.get(f)
-        self.assertTrue(keyread == keywritten)
-        self.assertTrue(valueread == valuewritten)
+        assert(keyread == keywritten)
+        assert(valueread == valuewritten)
 
     def test_multi_put_get(self):
         f = io.BytesIO()
@@ -50,8 +50,8 @@ class TestTlog(TestCase):
         f.seek(0)
         for n in range(1000):
             key, value = tlog.get(f)
-            self.assertTrue(int(key.decode('ascii')) == n)
-            self.assertTrue(int(value.decode('ascii')) == n + 1)
+            assert(int(key.decode('ascii')) == n)
+            assert(int(value.decode('ascii')) == n + 1)
 
     def test_ioerror(self):
         f = mockFile()
@@ -64,10 +64,10 @@ class TestTlog(TestCase):
             tlog.put(f, b'3', b'4')
         except IOError:
             exception_seen = True
-        self.assertTrue(exception_seen)
+        assert(exception_seen)
         # file position should not be affected by the exception
         # (no partial writes)
-        self.assertEqual(f.tell(), prevpos)
+        assert(f.tell() == prevpos)
 
     def test_read_ioerror(self):
         f = mockFile()
@@ -84,9 +84,9 @@ class TestTlog(TestCase):
             _, _ = tlog.get(f)
         except IOError:
             exception_seen = True
-        self.assertTrue(exception_seen)
+        assert(exception_seen)
         # file position should not be affected by the exception
         # (no partial writes)
         print (f.tell(), prevpos)
-        self.assertEqual(f.tell(), prevpos)
+        assert(f.tell() == prevpos)
 
